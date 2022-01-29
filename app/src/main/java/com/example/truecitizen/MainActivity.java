@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.example.truecitizen.databinding.ActivityMainBinding;
 import com.example.truecitizen.model.Questions;
+import com.google.android.material.snackbar.Snackbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,10 +29,6 @@ public class MainActivity extends AppCompatActivity {
             new Questions(R.string.question_government_senators, true),
 
 
-
-            //and more
-
-
     };
 
     @Override
@@ -44,15 +41,45 @@ public class MainActivity extends AppCompatActivity {
 
         binding.questionTextView.setText(questionsBank[currentQuestionIndex].getAnswwerResId());
 
+        binding.trueButton.setOnClickListener(view -> {
+
+            checkAnswer(true);
+        });
+        binding.falseButton.setOnClickListener(view -> {
+
+            checkAnswer(false);
+        });
         binding.button4.setOnClickListener(view -> {
 
-            //Log.d("Main", "onCreate: " + questionsBank[currentQuestionIndex++] );
-                currentQuestionIndex += currentQuestionIndex;
-                updateQuestion();
+            Log.d("Main", "onCreate: " + questionsBank[currentQuestionIndex++]);
+            currentQuestionIndex = (currentQuestionIndex + 1) % questionsBank.length;
+            updateQuestion();
         });
+        binding.button3.setOnClickListener(view -> {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex = (currentQuestionIndex - 1) % questionsBank.length;
+                updateQuestion();
+            }
+        });
+    
+    }
 
+    private void checkAnswer(boolean userChooseCorrect) {
+
+        boolean answerIsCorrect = questionsBank[currentQuestionIndex].isAnswerTrue();
+        int messageId;
+
+        if (answerIsCorrect == userChooseCorrect) {
+            messageId = R.string.correct_answer;
+        }else{
+
+            messageId = R.string.wrong_answer;
+        }
+
+        Snackbar.make(binding.imageView,messageId,Snackbar.LENGTH_SHORT).show();
 
     }
+
 
     private void updateQuestion() {
 
